@@ -15,7 +15,7 @@ var router = express.Router();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 // port setup
-app.set('port', process.env.PORT || 3000);
+// app.set('port', process.env.PORT || 3000);
 
 app.use(logger('dev')); 
 app.use(express.json());
