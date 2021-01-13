@@ -44,7 +44,7 @@ var pool = mysql.createPool({
   debug: false
 });
 
-// 게시판 등록
+// Create post
 router.route('/posts/create').post(function(req, res, next) {
   var {subject, content} = req.body;
 
@@ -75,6 +75,34 @@ router.route('/posts/create').post(function(req, res, next) {
   })  
 })
 
+// Fetch posts
+router.route('/posts').get(function(req, res, next) {
+  var {subject, content} = req.body;
+
+  pool.getConnection(function(err, conn) {
+    if(err) {
+      console.log('getConnection 중 오류 : ' + err);
+      return;
+    }
+
+    var exec = conn.query('select * from posts', function(err, result) {
+      conn.release();
+      console.log('실행될 sql : ' + exec.sql);
+
+      if(err) {
+        console.log('Fetch posts sql 실행도중 오류 발생함.');
+        console.dir(err);
+
+        return;
+      }
+      res.status(200).send({
+        msg: 'post 게시물을 불러왔습니다.',
+        posts: result
+      });
+    })
+  })
+})
+
 // 라우터 객체 등록
 app.use('/', router);
 
@@ -101,6 +129,6 @@ app.use(function(err, req, res, next) {
 
 module.exports = app;
 
-// var server = app.listen(app.get('port'), function() {
-//   console.log('Express server listening on port ' + server.address().port);
-// });
+var server = app.listen(app.get('port'), function() {
+  console.log('Express server listening on port ' + server.address().port);
+});
