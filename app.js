@@ -4,6 +4,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mysql = require('mysql');
+const multer = require('multer');
+const imageSavePath = 'public/images/'; // 파일이 저장될 경로 지정
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -44,9 +46,24 @@ var pool = mysql.createPool({
   debug: false
 });
 
+  const storage = multer.diskStorage({
+    destination(req, file, callback) {
+      callback(null, imageSavePath);
+    },
+    filename(req, file, callback) {
+      callback(null, file.originalname);
+    }
+  });
+
+  const upload = multer({
+    storage
+  })
+
+
 // Create post
 router.route('/posts/create').post(function(req, res, next) {
   var {subject, content} = req.body;
+
 
   pool.getConnection(function(err, conn) {
     if(err) {
@@ -129,6 +146,6 @@ app.use(function(err, req, res, next) {
 
 module.exports = app;
 
-// var server = app.listen(app.get('port'), function() {
-//   console.log('Express server listening on port ' + server.address().port);
-// });
+var server = app.listen(app.get('port'), function() {
+  console.log('Express server listening on port ' + server.address().port);
+});
