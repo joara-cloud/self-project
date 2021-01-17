@@ -1,5 +1,4 @@
 var express = require('express');
-var mysql = require('mysql');
 const multer = require('multer');
 const path = require('path');
 var router = express.Router();
@@ -7,29 +6,20 @@ const imageSavePath = 'upload/'; // 파일이 저장될 경로 지정
 
 /****************************/
 
-// Database 연결
-var pool = mysql.createPool({
-  connectionLimit: 10,
-  host: 'us-cdbr-east-02.cleardb.com',
-  user: 'b911dcaae2b835',
-  port: 3306,
-  password: '7363aad2',
-  database: 'heroku_e1bf3b94a251bc3',
-  debug: false
-});
+var db = require('../lib/db.js');
 
 const storage = multer.diskStorage({
   destination(req, file, callback) { 
     callback(null, imageSavePath);
   },
-  filename(req, file, callback) {
-    // callback(null, file.originalname);
+  // filename(req, file, callback) {
+  //   // callback(null, file.originalname);
 
-    var temp = file.originalname.split('.');
-    var extend = temp.pop();
-    var renamed = temp + new Date().valueOf() + '.' + extend;
-    callback(null, renamed);
-  }
+  //   var temp = file.originalname.split('.');
+  //   var extend = temp.pop();
+  //   var renamed = temp + new Date().valueOf() + '.' + extend;
+  //   callback(null, renamed);
+  // }
 });
 
 const upload = multer({
@@ -42,7 +32,7 @@ router.post('/create', upload.single('uploadImage'), function(req, res, next) {
   var {subject, content} = req.body;
   var {file} = req;
 
-  pool.getConnection(function(err, conn) {
+  db.getConnection(function(err, conn) {
     if(err) {
       console.log('err : '+ err);
       return;
@@ -72,7 +62,7 @@ router.post('/create', upload.single('uploadImage'), function(req, res, next) {
 
         var data = {
           board_idx: boardInsertId,
-          f_name: file.filename,
+          f_name: file.filename, // 중복되지 않게 저장해줌
           f_originalname: file.originalname,
           f_type: file.mimetype
         }
@@ -103,7 +93,7 @@ router.get('/', function(req, res, next) {
 
 	var {subject, content} = req.body;
 
-  pool.getConnection(function(err, conn) {
+  db.getConnection(function(err, conn) {
     if(err) {
       console.log('getConnection 중 오류 : ' + err);
       return;
@@ -120,18 +110,22 @@ router.get('/', function(req, res, next) {
         return;
       }
 
-      for(var i=0; i<rows.length; i++) {
-        boardIdx = rows[i].idx;
-        var fileExec = conn.query('select board_idx from board_file where board_idx = ' + boardIdx, function(err, rows) {
-          console.log('file rows'+rows);
-        });
-        console.log(fileExec.sql);
-
-      }
+      // for(var i=0; i<rows.length; i++) {
+      //   boardIdx = rows[i].idx;
+      //   var fileExec = conn.query('select board_idx from board_file where board_idx = ' + boardIdx, function(err, fileRows) {
+      //     if(err) {
+      //       console.log('file sql 중 에러 : ' + err);
+      //       return;
+      //     }
+      //     console.log('file rows : ');
+      //     console.dir(fileRows);
+      //   });
+      //   console.log(fileExec.sql);
+      // }
       
       res.status(200).send({
-        msg: 'post 게시물을 불러왔습니다.',
-        posts: rows
+        msg: '2post 게시물을 불러왔습니다.',
+        posts: rows,
       });
     })
   })
