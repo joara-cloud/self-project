@@ -1,2 +1,2 @@
 (window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d0ddf96"],{8459:function(t,n,e){"use strict";e.r(n);var r=function(){var t=this,n=t.$createElement,e=t._self._c||n;return e("div",[t._v(" board view "),e("router-link",{staticClass:"btn_ty01",attrs:{to:"/board/list"}},[t._v("목록으로")])],1)},s=[],a={},l=a,i=e("2877"),o=Object(i["a"])(l,r,s,!1,null,null,null);n["default"]=o.exports}}]);
-//# sourceMappingURL=chunk-2d0ddf96.76cfed22.js.map
+//# sourceMappingURL=chunk-2d0ddf96.96a96b3e.js.map
