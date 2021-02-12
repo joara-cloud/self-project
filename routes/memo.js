@@ -27,7 +27,7 @@ router.post('/create', function(req, res, next) {
 		}
 
 		var excu = conn.query('insert into memo set ?', data, function(err, result) {
-			console.log(excu.sql);;
+			console.log('insert 됨 '.excu.sql);
 		});
 	})
 })
