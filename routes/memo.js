@@ -26,8 +26,12 @@ router.post('/create', function(req, res, next) {
 			pos: pos
 		}
 
-		var excu = conn.query('insert into memo set ?', data, function(err, result) {
-			console.log('insert 됨 '.excu.sql);
+		var exec = conn.query('insert into memo set ?', data, function(err, result) {
+			if(err) {
+				console.log('insert 중 에러 ', err);
+				return;
+			}
+			console.log('insert 됨 ', exec.sql);
 		});
 	})
 })
@@ -42,10 +46,40 @@ router.post('/fetch', function(req, res, next) {
 		}
 
 		var excu = conn.query('select * from memo', function(err, rows) {
-			console.log(rows);
 			res.status(200).send({
 				msg: 'fetch memo',
 				rows: rows
+			})
+		});
+	})
+})
+
+// Delete memo
+router.delete('/delete', function(req, res, next) {
+
+	const {id} = req.body;
+	console.log(id);
+
+	db.getConnection(function(err, conn) {
+		if(err) {
+			console.log('getConnection 중 에러 : ', err);
+			return;
+		}
+
+		const data = {
+			idx: id
+		}
+
+		var exec = conn.query('delete from memo where ?',data, function(err, rows) {
+			if(err) {
+				console.log('insert 중 에러 ', err);
+				return;
+			}
+
+			console.log(exec.sql);
+
+			res.status(200).send({
+				msg: 'delete memo'
 			})
 		});
 	})
