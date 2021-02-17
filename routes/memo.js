@@ -39,6 +39,8 @@ router.post('/create', function(req, res, next) {
 // Fetch memo
 router.post('/fetch', function(req, res, next) {
 
+	console.log('fetch');
+
 	db.getConnection(function(err, conn) {
 		if(err) {
 			console.log('getConnection 중 에러 : ', err);
