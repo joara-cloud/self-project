@@ -47,7 +47,9 @@ router.post('/fetch', function(req, res, next) {
 			return;
 		}
 
-		var excu = conn.query('select * from memo', function(err, rows) {
+		var excu = conn.query('select * from memo order by pos asc', function(err, rows) {
+			console.log('fetch memo SQL : ', excu.sql);
+
 			res.status(200).send({
 				msg: 'fetch memo',
 				rows: rows
@@ -73,6 +75,39 @@ router.delete('/delete', function(req, res, next) {
 		}
 
 		var exec = conn.query('delete from memo where ?',data, function(err, rows) {
+			if(err) {
+				console.log('insert 중 에러 ', err);
+				return;
+			}
+
+			console.log(exec.sql);
+
+			res.status(200).send({
+				msg: 'delete memo'
+			})
+		});
+	})
+})
+
+// Update memo
+router.put('/update', function(req, res, next) {
+
+	const {pos, idx} = req.body;
+	console.log('pos : ', pos);
+
+	db.getConnection(function(err, conn) {
+		if(err) {
+			console.log('getConnection 중 에러 : ', err);
+			return;
+		}
+
+		const data = {
+			pos: pos,
+			idx: idx
+		}
+
+		
+		var exec = conn.query('update memo set pos=? where idx=?',[data.pos, data.idx], function(err, rows) {
 			if(err) {
 				console.log('insert 중 에러 ', err);
 				return;
