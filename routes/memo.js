@@ -16,7 +16,7 @@ router.post('/create', function(req, res, next) {
 
 	db.getConnection(function(err, conn) {
 		if(err) {
-			console.log('getConnection 중 에러 : ', err);
+			console.log('[create memo] getConnection 중 에러 : ', err);
 			return;
 		}
 
@@ -43,11 +43,12 @@ router.post('/fetch', function(req, res, next) {
 
 	db.getConnection(function(err, conn) {
 		if(err) {
-			console.log('getConnection 중 에러 : ', err);
+			console.log('[fetch moemo] getConnection 중 에러 : ', err);
 			return;
 		}
 
 		var excu = conn.query('select * from memo order by pos asc', function(err, rows) {
+			
 			console.log('fetch memo SQL : ', excu.sql);
 
 			res.status(200).send({
@@ -66,7 +67,7 @@ router.delete('/delete', function(req, res, next) {
 
 	db.getConnection(function(err, conn) {
 		if(err) {
-			console.log('getConnection 중 에러 : ', err);
+			console.log('[delete memo] getConnection 중 에러 : ', err);
 			return;
 		}
 
@@ -97,7 +98,7 @@ router.put('/update', function(req, res, next) {
 
 	db.getConnection(function(err, conn) {
 		if(err) {
-			console.log('getConnection 중 에러 : ', err);
+			console.log('[update memo] getConnection 중 에러 : ', err);
 			return;
 		}
 
@@ -116,7 +117,8 @@ router.put('/update', function(req, res, next) {
 			console.log(exec.sql);
 
 			res.status(200).send({
-				msg: 'delete memo'
+				msg: 'delete memo',
+				pos: data.pos
 			})
 		});
 	})
