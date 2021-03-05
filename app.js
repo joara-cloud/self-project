@@ -26,7 +26,9 @@ app.use(logger('dev'));
 app.use(express.json()); // body-parser (express.js도 빌트인 body parser를 넣었다는 점)
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('upload'));
+app.use(express.static('public'));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

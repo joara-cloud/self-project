@@ -98,7 +98,8 @@ router.get('/', function(req, res, next) {
       return;
     }
 
-    var exec = conn.query('select * from posts order by created DESC', function(err, rows) { // 게시물 패치
+    // var exec = conn.query('select * from posts order by created DESC', function(err, rows) { // 게시물 패치
+    var exec = conn.query('select p.*, b.board_idx, b.f_name from posts p left join board_file b on p.idx = b.board_idx order by created DESC', function(err, rows) { // 게시물 패치 (eddie)
       conn.release();
       console.log('실행될 sql : ' + exec.sql);
 
@@ -109,37 +110,24 @@ router.get('/', function(req, res, next) {
 
         return;
       }
+      
 
       // https://gist.github.com/livelikeabel/909d5dc35e96e3f0bed0cd28cddcdeaf (이중 query 사용 사례)
-      for(var row in rows) {
-        var data = {
-          board_idx: rows[row].idx
-        }
-        conn.query('select * from board_file where ?',data , function(err, files) {
-          if(err) {
-            console.log('select files sql 실행도중 오류 발생함. sql은? ', conn.sql);
-            console.dir(err);
-    
-            return;
-          }
-          console.log(files);
-        })
-      }
-
-
-
-      // for(var i=0; i<rows.length; i++) {
-      //   boardIdx = rows[i].idx;
-      //   var fileExec = conn.query('select board_idx from board_file where board_idx = ' + boardIdx, function(err, fileRows) {
+      // for(var row in rows) {
+      //   var data = {
+      //     board_idx: rows[row].idx
+      //   }
+      //   conn.query('select * from board_file where ?',data , function(err, files) {
       //     if(err) {
-      //       console.log('file sql 중 에러 : ' + err);
+      //       console.log('select files sql 실행도중 오류 발생함. sql은? ', conn.sql);
+      //       console.dir(err);
+    
       //       return;
       //     }
-      //     console.log('file rows : ');
-      //     console.dir(fileRows);
-      //   });
-      //   console.log(fileExec.sql);
+      //     console.log(files);
+      //   })
       // }
+
       
       res.status(200).send({
         msg: '2post 게시물을 불러왔습니다.',
