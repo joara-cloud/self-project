@@ -12,14 +12,12 @@ const storage = multer.diskStorage({
   destination(req, file, callback) { 
     callback(null, imageSavePath);
   },
-  // filename(req, file, callback) {
-  //   // callback(null, file.originalname);
-
-  //   var temp = file.originalname.split('.');
-  //   var extend = temp.pop();
-  //   var renamed = temp + new Date().valueOf() + '.' + extend;
-  //   callback(null, renamed);
-  // }
+  filename(req, file, callback) { // 파일명 설정
+    var temp = file.originalname.split('.');
+    var extend = file.mimetype.split('/')[1];
+    var renamed = temp[0] + new Date().valueOf() + '.' + extend;
+    callback(null, renamed);
+  }
 });
 
 const upload = multer({
@@ -68,6 +66,7 @@ router.post('/create', upload.single('uploadImage'), function(req, res, next) {
         }
 
         var fileExec = conn.query('insert into board_file set ?', data, function(err, result) {
+          conn.release();
           console.log('첨부파일 실행 sql : ' +  fileExec.sql);
 
           if(err) {
@@ -99,16 +98,35 @@ router.get('/', function(req, res, next) {
       return;
     }
 
-    var exec = conn.query('select * from posts', function(err, rows) {
+    var exec = conn.query('select * from posts order by created DESC', function(err, rows) { // 게시물 패치
       conn.release();
       console.log('실행될 sql : ' + exec.sql);
 
+      
       if(err) {
         console.log('Fetch posts sql 실행도중 오류 발생함.');
         console.dir(err);
 
         return;
       }
+
+      // https://gist.github.com/livelikeabel/909d5dc35e96e3f0bed0cd28cddcdeaf (이중 query 사용 사례)
+      for(var row in rows) {
+        var data = {
+          board_idx: rows[row].idx
+        }
+        conn.query('select * from board_file where ?',data , function(err, files) {
+          if(err) {
+            console.log('select files sql 실행도중 오류 발생함. sql은? ', conn.sql);
+            console.dir(err);
+    
+            return;
+          }
+          console.log(files);
+        })
+      }
+
+
 
       // for(var i=0; i<rows.length; i++) {
       //   boardIdx = rows[i].idx;
