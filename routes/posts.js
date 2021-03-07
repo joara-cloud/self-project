@@ -56,16 +56,15 @@ router.post('/create', upload.single('uploadImage'), function(req, res, next) {
       if(file) { // 첨부파일이 있으면
         console.log('첨부파일 있음');
         console.log(file);
-        // 테이블 정보 : idx(auto), board_idx(int), f_name, f_originalname, f_type
 
         var data = {
-          board_idx: boardInsertId,
+          post_id: boardInsertId,
           f_name: file.filename, // 중복되지 않게 저장해줌
           f_originalname: file.originalname,
           f_type: file.mimetype
         }
 
-        var fileExec = conn.query('insert into board_file set ?', data, function(err, result) {
+        var fileExec = conn.query('insert into posts_file set ?', data, function(err, result) {
           conn.release();
           console.log('첨부파일 실행 sql : ' +  fileExec.sql);
 
@@ -97,7 +96,7 @@ router.get('/', function(req, res, next) {
     }
 
     // var exec = conn.query('select * from posts order by created DESC', function(err, rows) { // 게시물 패치
-    var exec = conn.query('select p.*, b.board_idx, b.f_name from posts p left join board_file b on p.idx = b.board_idx order by created DESC', function(err, rows) { // 게시물 패치 (eddie)
+    var exec = conn.query('select p.*, b.post_id, b.f_name from posts p left join posts_file b on p.pid = b.post_id order by created DESC', function(err, rows) { // 게시물 패치 (eddie)
       conn.release();
       console.log('실행될 sql : ' + exec.sql);
       
@@ -116,36 +115,36 @@ router.get('/', function(req, res, next) {
   })
 })
 
-// Fetch post
+// Fetch post (1개)
 router.get('/:id', function(req, res, next) {
   console.log('fetch post 호출됨');
 
-  const id = req.body.id;
+  const id = req.params.id;
   console.log('id :::::::::::::::::::::::::::', id);
 
-  // db.getConnection(function(err, conn) {
-  //   if(err) {
-  //     console.log('getConnection 중 오류 : ' + err);
-  //     return;
-  //   }
+  db.getConnection(function(err, conn) {
+    if(err) {
+      console.log('getConnection 중 오류 : ' + err);
+      return;
+    }
 
-  //   var exec = conn.query('select * from posts where idx=?',id, function(err, rows) { // 게시물 패치
-  //     conn.release();
-  //     console.log('실행될 sql : ' + exec.sql);
+    var exec = conn.query('select p.*, f.f_name from posts p LEFT JOIN posts_file f ON f.post_id = p.pid where p.pid = ?',id, function(err, rows) { // 게시물 패치
+      conn.release();
+      console.log('실행될 sql : ' + exec.sql);
       
-  //     if(err) {
-  //       console.log('Fetch posts sql 실행도중 오류 발생함.');
-  //       console.dir(err);
+      if(err) {
+        console.log('Fetch posts sql 실행도중 오류 발생함.');
+        console.dir(err);
 
-  //       return;
-  //     }
+        return;
+      }
       
-  //     res.status(200).send({
-  //       msg: 'post 게시물을 불러왔습니다.',
-  //       posts: rows,
-  //     });
-  //   })
-  // })
+      res.status(200).send({
+        msg: 'post 게시물을 불러왔습니다.',
+        posts: rows,
+      });
+    })
+  })
 })
 
 
