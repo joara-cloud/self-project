@@ -6,7 +6,9 @@ var logger = require('morgan');
 var mysql = require('mysql');
 var mysql = require('mysql');
 const multer = require('multer');
-const imageSavePath = './public/img/'; // 파일이 저장될 경로 지정
+// const imageSavePath = './public/img/'; // 파일이 저장될 경로 지정
+var history = require('connect-history-api-fallback');
+var url = require('url');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -22,6 +24,7 @@ app.set('view engine', 'pug');
 // port setup
 app.set('port', process.env.PORT || 3000);
 
+app.use(history()); 
 app.use(logger('dev')); 
 app.use(express.json()); // body-parser (express.js도 빌트인 body parser를 넣었다는 점)
 app.use(express.urlencoded({ extended: false }));

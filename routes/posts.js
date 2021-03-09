@@ -2,6 +2,8 @@ var express = require('express');
 const multer = require('multer');
 const path = require('path');
 var router = express.Router();
+const url = require('url');
+
 const imageSavePath = 'upload/'; // 파일이 저장될 경로 지정
 
 /****************************/
@@ -86,8 +88,22 @@ router.post('/create', upload.single('uploadImage'), function(req, res, next) {
 })
 
 // Fetch posts
-router.get('/', function(req, res, next) {
+router.get('/list', function(req, res, next) {
   console.log('fetch posts 호출됨');
+
+  const pageNum = req.query || req.body;
+
+  
+  console.log('page num :::::::::::', req.query);
+  console.log('request bodyyyyyy :::::::::::', req.body);
+
+  const myURL = url.parse('https://user:pass@sub.example.com:8080/p/a/t/h?query=string&query2=string2#hash');
+console.log('search ::::::::::::: ',myURL.query);
+
+  // var queryData = new URL(window.location.href).query;
+  
+
+  // console.log('url :::::::::::::::::', queryData);
 
   db.getConnection(function(err, conn) {
     if(err) {
