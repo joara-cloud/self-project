@@ -33,6 +33,18 @@ app.use(cookieParser());
 app.use(express.static('upload'));
 app.use(express.static('public'));
 
+// router.route('/posts/list').get(function(req, res) {
+//   console.log('/posts/list 호출됨.');
+
+//   var paramAge = req.url;
+  
+//   console.log('요청 파라미터 : ', paramAge);
+
+//   res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+//   res.send().status(200);
+//   res.end();
+// });
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/posts', postsRouter);

@@ -94,11 +94,14 @@ router.get('/list', function(req, res, next) {
   const pageNum = req.query || req.body;
 
   
+  const url2 = req.url;
   console.log('page num :::::::::::', req.query);
-  console.log('request bodyyyyyy :::::::::::', req.body);
+  console.log('URL :::::::::::', url2);
 
-  const myURL = url.parse('https://user:pass@sub.example.com:8080/p/a/t/h?query=string&query2=string2#hash');
-console.log('search ::::::::::::: ',myURL.query);
+  // const url2 = 'https://user:pass@sub.example.com:8080/p/a/t/h?query=string&query2=string2#hash';
+  const myURL = url.parse(url2);
+  console.log('search ::::::::::::: ',myURL.query);
+
 
   // var queryData = new URL(window.location.href).query;
   
