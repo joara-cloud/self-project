@@ -4,9 +4,10 @@ const path = require('path');
 var router = express.Router();
 const url = require('url');
 
-const imageSavePath = 'upload/'; // 파일이 저장될 경로 지정
+
 
 /****************************/
+const imageSavePath = 'upload/'; // 파일이 저장될 경로 지정
 
 var db = require('../lib/db.js');
 
@@ -25,6 +26,8 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage
 })
+
+/****************************/
 
 // Create post
 router.post('/create', upload.single('uploadImage'), function(req, res, next) {
@@ -139,7 +142,9 @@ router.get('/:id', function(req, res, next) {
   console.log('fetch post 호출됨');
 
   const id = req.params.id;
+  const query = req.query;
   console.log('id :::::::::::::::::::::::::::', id);
+  console.log('query :::::::::::::::::::::::::::', query);
 
   db.getConnection(function(err, conn) {
     if(err) {
