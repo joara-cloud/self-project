@@ -30,7 +30,7 @@ app.use(history(
       {
         from: /^\/libs\/.*$/,
         to: function(context) {
-          console.log('/bower_components' + context.parsedUrl.pathname);
+          console.log('========================/bower_components' + context.parsedUrl.pathname);
           return '/bower_components' + context.parsedUrl.pathname;
         }
       }

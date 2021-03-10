@@ -27,6 +27,7 @@ router.post('/create', function(req, res, next) {
 		}
 
 		var exec = conn.query('insert into memo set ?', data, function(err, result) {
+			conn.release();
 			if(err) {
 				console.log('insert 중 에러 ', err);
 				return;
@@ -48,6 +49,7 @@ router.post('/fetch', function(req, res, next) {
 		}
 
 		var excu = conn.query('select * from memo order by pos asc', function(err, rows) {
+			conn.release();
 			
 			console.log('fetch memo SQL : ', excu.sql);
 
@@ -76,6 +78,7 @@ router.delete('/delete', function(req, res, next) {
 		}
 
 		var exec = conn.query('delete from memo where ?',data, function(err, rows) {
+			conn.release();
 			if(err) {
 				console.log('insert 중 에러 ', err);
 				return;
@@ -109,6 +112,7 @@ router.put('/update', function(req, res, next) {
 
 		
 		var exec = conn.query('update memo set pos=? where idx=?',[data.pos, data.idx], function(err, rows) {
+			conn.release();
 			if(err) {
 				console.log('insert 중 에러 ', err);
 				return;
@@ -117,7 +121,7 @@ router.put('/update', function(req, res, next) {
 			console.log(exec.sql);
 
 			res.status(200).send({
-				msg: 'delete memo',
+				msg: 'update memo',
 				pos: data.pos
 			})
 		});
