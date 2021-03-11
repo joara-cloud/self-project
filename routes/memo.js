@@ -62,10 +62,11 @@ router.post('/fetch', function(req, res, next) {
 })
 
 // Delete memo
-router.delete('/delete', function(req, res, next) {
+router.delete('/delete/:id', function(req, res, next) {
 
-	const {id} = req.body;
-	console.log(id);
+	// const {id} = req.params;
+	console.log('[delete memo]');
+
 
 	db.getConnection(function(err, conn) {
 		if(err) {
@@ -74,7 +75,7 @@ router.delete('/delete', function(req, res, next) {
 		}
 
 		const data = {
-			idx: id
+			idx: req.params.id
 		}
 
 		var exec = conn.query('delete from memo where ?',data, function(err, rows) {
