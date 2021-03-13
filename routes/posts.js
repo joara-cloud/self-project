@@ -91,25 +91,10 @@ router.post('/create', upload.single('uploadImage'), function(req, res, next) {
 })
 
 // Fetch posts
-router.get('/list', function(req, res, next) {
+router.post('/list', function(req, res, next) { // get으로 query string 가져와지지 않아서 post로 변경함 (connect-history-api-fallback 관련인듯..? 아닐수도)
   console.log('fetch posts 호출됨');
 
-  const pageNum = req.query || req.body;
-
-  
-  const url2 = req.url;
-  console.log('page num :::::::::::', req.query);
-  console.log('URL :::::::::::', url2);
-
-  // const url2 = 'https://user:pass@sub.example.com:8080/p/a/t/h?query=string&query2=string2#hash';
-  const myURL = url.parse(url2);
-  console.log('search ::::::::::::: ',myURL.query);
-
-
-  // var queryData = new URL(window.location.href).query;
-  
-
-  // console.log('url :::::::::::::::::', queryData);
+  const {page, listNum} = req.body;
 
   db.getConnection(function(err, conn) {
     if(err) {
@@ -118,7 +103,12 @@ router.get('/list', function(req, res, next) {
     }
 
     // var exec = conn.query('select * from posts order by created DESC', function(err, rows) { // 게시물 패치
-    var exec = conn.query('select p.*, b.post_id, b.f_name from posts p left join posts_file b on p.pid = b.post_id order by created DESC', function(err, rows) { // 게시물 패치 (eddie)
+    let sql = `select p.*, b.post_id, b.f_name from posts p left join posts_file b on p.pid = b.post_id order by created DESC`;
+    if(listNum) {
+      sql += ` LIMIT ${(page-1)*listNum}, ${listNum}`;
+    }
+    console.log(sql);
+    var exec = conn.query(sql, function(err, rows) { // 게시물 패치 (eddie)
       conn.release();
       console.log('실행될 sql : ' + exec.sql);
       
