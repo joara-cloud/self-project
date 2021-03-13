@@ -161,6 +161,40 @@ router.get('/:id', function(req, res, next) {
   })
 })
 
+// Fetch delete (1개)
+router.delete('/delete', function(req, res, next) {
+  console.log('fetch delete 호출됨');
+
+  const {deleteItem} = req.body;
+  console.log('data :::::::::::::::::::::::::::', deleteItem);
+
+  const item = deleteItem.join(',');
+
+  db.getConnection(function(err, conn) {
+    if(err) {
+      console.log('getConnection 중 오류 : ' + err);
+      return;
+    }
+
+    const sql = `delete from posts where pid=${item}`;
+    var exec = conn.query(sql, function(err, rows) { // 게시물 패치
+      conn.release();
+      console.log('실행될 sql : ' + exec.sql);
+      
+      if(err) {
+        console.log('Fetch posts sql 실행도중 오류 발생함.');
+        console.dir(err);
+
+        return;
+      }
+      
+      res.status(200).send({
+        msg: '선택한 게시물을 삭제했습니다.',
+        deletePid: item,
+      });
+    })
+  })
+})
 
 
 /****************************/
