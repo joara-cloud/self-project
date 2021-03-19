@@ -1,3 +1,4 @@
+const { count } = require('console');
 var express = require('express');
 const multer = require('multer');
 const path = require('path');
@@ -103,10 +104,18 @@ router.post('/list', function(req, res, next) { // get으로 query string 가져
     }
 
     // var exec = conn.query('select * from posts order by created DESC', function(err, rows) { // 게시물 패치
-    let sql = `select p.*, b.post_id, b.f_name from posts p left join posts_file b on p.pid = b.post_id order by created DESC`;
+    // let sql = `select p.*, b.post_id, b.f_name from posts p left join posts_file b on p.pid = b.post_id order by created DESC`;
+    // if(listNum) {
+    //   sql += ` LIMIT ${(page-1)*listNum}, ${listNum}`;
+    // }
+
+    let sql = '';
     if(listNum) {
-      sql += ` LIMIT ${(page-1)*listNum}, ${listNum}`;
+      sql = `select p.*, b.post_id, b.f_name from posts p left join posts_file b on p.pid = b.post_id order by created DESC LIMIT ${(page-1)*listNum}, ${listNum}`;
+    }else {
+      sql = `select count(*) as cnt from posts`;
     }
+
     console.log(sql);
     var exec = conn.query(sql, function(err, rows) { // 게시물 패치 (eddie)
       conn.release();
@@ -129,7 +138,7 @@ router.post('/list', function(req, res, next) { // get으로 query string 가져
 
 // Fetch post (1개)
 router.get('/:id', function(req, res, next) {
-  console.log('fetch post 호출됨');
+  console.log('fetch post 호출됨(board view)');
 
   const id = req.params.id;
   const query = req.query;
